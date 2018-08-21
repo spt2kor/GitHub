@@ -1,6 +1,6 @@
 # GitHub
 
--------------------------     
+-------------------------          
 
 keeping all code in one place.
 
@@ -168,113 +168,112 @@ keeping all code in one place.
 └───IPC-Sln
 
     │   IPC-Sln.sln
-     
-    │
-     
-    ├───IPC-Prod-Cons-SM-MQ
-     
-    │   ├───ConsumerProcess
-     
-    │   │   │   ConsumerMain.cpp
-     
-    │   │   │   IPC-Prod-Cons-SM-MQ-ConsumerProcess.vcxproj
-     
-    │   │   │
-     
-    │   │   └───x64
-     
-    │   │       └───Debug
-     
-    │   │               cl.command.1.tlog
-     
-    │   │               CL.read.1.tlog
-     
-    │   │               CL.write.1.tlog
-     
-    │   │               ConsumerMain.obj
-     
-    │   │               IPC-Prod-Cons-SM-MQ-ConsumerProcess.lastbuildstate
-     
-    │   │               IPC-Prod-Cons-SM-MQ-ConsumerProcess.log
-     
-    │   │               link-cvtres.read.1.tlog
-     
-    │   │               link-cvtres.write.1.tlog
-     
-    │   │               link-rc.read.1.tlog
-     
-    │   │               link-rc.write.1.tlog
-     
-    │   │               link.command.1.tlog
-     
-    │   │               link.read.1.tlog
-     
-    │   │               link.write.1.tlog
-     
-    │   │               vc110.idb
-     
-    │   │               vc110.pdb
-     
-    │   │
-     
-    │   └───ProducerProcess
-     
-    │       │   IPC-Prod-Cons-SM-MQ-ProducerProcess.vcxproj
-     
-    │       │   ProducerMain.cpp
-     
-    │       │
-     
-    │       └───x64
-     
-    │           └───Debug
-     
-    │                   cl.command.1.tlog
-     
-    │                   CL.read.1.tlog
-     
-    │                   CL.write.1.tlog
-     
-    │                   IPC-Prod-Cons-SM-MQ-ProducerProcess.lastbuildstate
-     
-    │                   IPC-Prod-Cons-SM-MQ-ProducerProcess.log
-     
-    │                   link-cvtres.read.1.tlog
-     
-    │                   link-cvtres.write.1.tlog
-     
-    │                   link-rc.read.1.tlog
-     
-    │                   link-rc.write.1.tlog
-     
-    │                   link.command.1.tlog
-     
-    │                   link.read.1.tlog
-     
-    │                   link.write.1.tlog
-     
-    │                   ProducerMain.obj
-     
-    │                   vc110.idb
-     
-    │                   vc110.pdb
-     
-    │
-     
-    └───x64
-     
-        └───Debug
           
+    │
+          
+    ├───IPC-Prod-Cons-SM-MQ
+          
+    │   ├───ConsumerProcess
+          
+    │   │   │   ConsumerMain.cpp
+          
+    │   │   │   IPC-Prod-Cons-SM-MQ-ConsumerProcess.vcxproj
+          
+    │   │   │
+          
+    │   │   └───x64
+          
+    │   │       └───Debug
+          
+    │   │               cl.command.1.tlog
+          
+    │   │               CL.read.1.tlog
+          
+    │   │               CL.write.1.tlog
+          
+    │   │               ConsumerMain.obj
+          
+    │   │               IPC-Prod-Cons-SM-MQ-ConsumerProcess.lastbuildstate
+          
+    │   │               IPC-Prod-Cons-SM-MQ-ConsumerProcess.log
+          
+    │   │               link-cvtres.read.1.tlog
+          
+    │   │               link-cvtres.write.1.tlog
+          
+    │   │               link-rc.read.1.tlog
+          
+    │   │               link-rc.write.1.tlog
+          
+    │   │               link.command.1.tlog
+          
+    │   │               link.read.1.tlog
+          
+    │   │               link.write.1.tlog
+          
+    │   │               vc110.idb
+          
+    │   │               vc110.pdb
+          
+    │   │
+          
+    │   └───ProducerProcess
+          
+    │       │   IPC-Prod-Cons-SM-MQ-ProducerProcess.vcxproj
+          
+    │       │   ProducerMain.cpp
+          
+    │       │
+          
+    │       └───x64
+          
+    │           └───Debug
+          
+    │                   cl.command.1.tlog
+          
+    │                   CL.read.1.tlog
+          
+    │                   CL.write.1.tlog
+          
+    │                   IPC-Prod-Cons-SM-MQ-ProducerProcess.lastbuildstate
+          
+    │                   IPC-Prod-Cons-SM-MQ-ProducerProcess.log
+          
+    │                   link-cvtres.read.1.tlog
+          
+    │                   link-cvtres.write.1.tlog
+          
+    │                   link-rc.read.1.tlog
+          
+    │                   link-rc.write.1.tlog
+          
+    │                   link.command.1.tlog
+          
+    │                   link.read.1.tlog
+          
+    │                   link.write.1.tlog
+          
+    │                   ProducerMain.obj
+          
+    │                   vc110.idb
+          
+    │                   vc110.pdb
+          
+    │
+          
+    └───x64
+          
+        └───Debug
+                    
                 IPC-Prod-Cons-SM-MQ-ConsumerProcess.exe
-                    
+                                        
                 IPC-Prod-Cons-SM-MQ-ConsumerProcess.ilk
-                    
+                                        
                 IPC-Prod-Cons-SM-MQ-ConsumerProcess.pdb
-                    
+                                        
                 IPC-Prod-Cons-SM-MQ-ProducerProcess.exe
-                    
+                                        
                 IPC-Prod-Cons-SM-MQ-ProducerProcess.ilk
-                    
+                                        
                 IPC-Prod-Cons-SM-MQ-ProducerProcess.pdb
-                    
-                    
+                                        
