@@ -1,0 +1,1275 @@
+# Export file dir = /home/bnsndv04/data/scptest/dailycd/ascii/sol9/6.2.10.2/scp/6.2/oil/export_to_lp
+# Import file dir = /home/bnsndv04/data/scptest/dailycd/ascii/sol9/6.2.10.2/scp/6.2/oil/import_from_lp
+# lpopt location = /home/bnsndv04/data/scptest/dailycd/ascii/sol9/6.2.10.2/scp/6.2
+# Data file dir = /home/bnsndv04/data/scptest/dailycd/ascii/sol9/6.2.10.2/scp/6.2/instances/masterplanning/project_data/solver_data
+## engine version = 6.2.10.2
+## lpopt export: v5.2
+## export start = 11-04-05 12:10
+## PLAN: start = 2001-01-04, end = 2001-12-31
+## Horizon 'LP_HORIZON'; start = 2001-01-04, end = 2001-12-31
+## CDM_SCP = /home/bnsndv04/data/scptest/dailycd/ascii/sol9/6.2.10.2/scp/6.2/5.2_schema/scp
+## Export parameters (env vars)
+## Assuming 4.3+ CDM schema
+## FlowRounding == 0: produce->up, consume->down
+## SmartICMP = off
+## ProfitOpt = off
+## export script directory = /home/bnsndv04/data/scptest/dailycd/ascii/sol9/6.2.10.2/scp/6.2/oil/export_to_lp
+# horizon name = 'LP_HORIZON'
+param: TIMEBUCKET: start days npv_factor:= 
+## discount rate =  0
+#HEADER: start 	 days.count 	 discount_factor
+#FILE: create_timebucket_new_set.in 
+'2001-01-04'       1     1
+'2001-01-05'       1     1
+'2001-01-06'       1     1
+'2001-01-07'       1     1
+'2001-01-08'       1     1
+'2001-01-09'       1     1
+'2001-01-10'       1     1
+'2001-01-11'       7     1
+'2001-01-18'       7     1
+'2001-01-25'       7     1
+'2001-02-01'       7     1
+'2001-02-08'       7     1
+'2001-02-15'       7     1
+'2001-02-22'       7     1
+'2001-03-01'       7     1
+'2001-03-08'       7     1
+'2001-03-15'       17     1
+'2001-04-01'       30     1
+'2001-05-01'       31     1
+'2001-06-01'       30     1
+'2001-07-01'       31     1
+'2001-08-01'       31     1
+'2001-09-01'       30     1
+'2001-10-01'       31     1
+'2001-11-01'       30     1
+'2001-12-01'       30     1
+;
+set LAYER := type demand_ranks bands backlog max_nfs_amt
+#HEADER: name 	 rank 	 layer_type 	 demand_ranks 	 demand_bands 	 backlog  	 max_nfs_amt
+#FILE: create_lp_layer_set.in 
+'Layer2' 0 S '3~4' 100 0 -1
+'Layer1' 0 S '1~2' 100 0 -1
+'1000' 1000 S '*' 100
+;
+# local override
+set OBLEVEL := time_weighted rel_tolerance abs_tolerance lp_method po_type active ls_hard twgt_bands tightMPA
+#HEADER: oblevel 	 time_weighted 	 rel_tolerance 	 abs_tolerance 	 lp_method 	 po_method 	 active 	 ls_hard 	 twgt_bands 	 tightmpa 	 myprodmixbands
+#FILE: tmapi_create_po_oblevel_set.in 
+'campaign_planning["default(1000-10-0-0)"]' 1 0 0 PRIMAL M T F 1 0  0    
+'amt_not_satisfied["Layer1"]' 1 0 0 PRIMAL M T F 1 0  0    
+'backlog["Layer1"]' 1 0 0 PRIMAL M T F 1 0  0    
+'amt_not_satisfied["Layer2"]' 1 0 0 PRIMAL M T F 1 0  0    
+'backlog["Layer2"]' 1 0 0 PRIMAL M T F 1 0  0    
+'min_band_violation["3"]' 1 0 0 PRIMAL M T F 1 0  0    
+'min_cover_violation["3"]' 1 0 0 PRIMAL M T F 1 0  0    
+'min_band_violation["2"]' 1 0 0 PRIMAL M T F 1 0  0    
+'min_cover_violation["2"]' 1 0 0 PRIMAL M T F 1 0  0    
+'min_band_violation["1"]' 1 0 0 PRIMAL M T F 1 0  0    
+'min_cover_violation["1"]' 1 0 0 PRIMAL M T F 1 0  0    
+'min_band_violation["0"]' 1 0 0 PRIMAL M T F 1 0  0    
+'min_cover_violation["0"]' 1 0 0 PRIMAL M T F 1 0  0    
+'alternates' 1 0 0 PRIMAL M T F 1 0  0    
+'max_band_violation["3"]' 1 0 0 PRIMAL M T F 1 0  0    
+'max_cover_violation["3"]' 1 0 0 PRIMAL M T F 1 0  0    
+'max_band_violation["2"]' 1 0 0 PRIMAL M T F 1 0  0    
+'max_cover_violation["2"]' 1 0 0 PRIMAL M T F 1 0  0    
+'max_band_violation["1"]' 1 0 0 PRIMAL M T F 1 0  0    
+'max_cover_violation["1"]' 1 0 0 PRIMAL M T F 1 0  0    
+'profit_optimization' 1 0 0 PRIMAL M T F 1 0  0    
+'surplus_storage' 1 0 0 PRIMAL M T F 1 0  0    
+'op_earliness' 1 0 0 PRIMAL M T F 1 0  0    
+'inventory' 1 0 0 PRIMAL M T F 1 0  0    
+;
+set BUFFER_STAGES := stage carryover
+#HEADER: stage 	 carryover_type( 1-always carryover , 2-carryover within MLT , 3 - no carryover) 
+#FILE: create_buffer_stage.in 
+'NoCarry'  3
+'nocarry'  3
+'NOCARRY'  3
+;
+# tmapi buffer export
+param: BUFFER : carrying_cost inv_cost type stage level transship priority indep_demand ndoc:= 
+#HEADER: name 	 carry_cost 	 inv_cost 	 type 	 stage 	 buffer_level 	 transship 	 priority 	 indep_demand 	 daysofcover_approx 
+#FILE: tmapi_create_buffer_set.in 
+'Item2-at-RDC_A2'	 0.01315068  0     B '.' 1 T 1 F -1
+'Item4-at-RDC_C2'	 0.01972603  0     B '.' 1 T 1 F -1
+'Item3-at-RDC_B2'	 0.01808219  0     B '.' 1 T 1 F -1
+'Item4-at-RDC_B2'	 0.01972603  0     B '.' 1 T 1 F -1
+'Item3-at-RDC_A2'	 0.01808219  0     B '.' 1 T 1 F -1
+'Int_A-at-Plant_1'	 0  0     B '.' 5 T 1 F -1
+'Item4-at-RDC_A2'	 0.01972603  0     B '.' 1 T 1 F -1
+'Int_B-at-Plant_1'	 0  0     B '.' 5 T 1 F -1
+'Int_A-at-Plant_2'	 0  0     B '.' 5 T 1 F -1
+'Int_C-at-Plant_1'	 0  0     B '.' 5 T 1 F -1
+'Int_B-at-Plant_2'	 0  0     B '.' 5 T 1 F -1
+'Item1-at-DC_A'	 0.01643836  0     B '.' 3 T 1 F -1
+'raw_m-at-Plant_1'	 0  0     I '.' 6 T 1 F -1
+'Item1-at-DC_B'	 0.01643836  0     B '.' 3 T 1 F -1
+'Item1-at-DC_C'	 0.01643836  0     B '.' 2 T 1 F -1
+'Item2-at-DC_A'	 0.01315068  0     B '.' 3 T 1 F -1
+'Int_C-at-Plant_2'	 0  0     B '.' 5 T 1 F -1
+'Item2-at-DC_B'	 0.01315068  0     B '.' 3 T 1 F -1
+'Item2-at-DC_C'	 0.01315068  0     B '.' 2 T 1 F -1
+'raw_m-at-Plant_2'	 0  0     I '.' 6 T 1 F -1
+'Item3-at-DC_A'	 0.01808219  0     B '.' 3 T 1 F -1
+'Item3-at-DC_B'	 0.01808219  0     B '.' 3 T 1 F -1
+'Item3-at-DC_C'	 0.01808219  0     B '.' 2 T 1 F -1
+'Item4-at-DC_A'	 0.01972603  0     B '.' 3 T 1 F -1
+'Item1-at-Plant_1'	 0.01643836  0     B '.' 4 T 1 F -1
+'Item4-at-DC_B'	 0.01972603  0     B '.' 3 T 1 F -1
+'Item1-at-Plant_2'	 0.01643836  0     B '.' 4 T 1 F -1
+'Item4-at-DC_C'	 0.01972603  0     B '.' 2 T 1 F -1
+'Item2-at-Plant_1'	 0.01315068  0     B '.' 4 T 1 F -1
+'Item2-at-Plant_2'	 0.01315068  0     B '.' 4 T 1 F -1
+'Item1-at-RDC_C1'	 0.01643836  0     B '.' 1 T 1 F -1
+'Item3-at-Plant_1'	 0.01808219  0     B '.' 4 T 1 F -1
+'Item3-at-Plant_2'	 0.01808219  0     B '.' 4 T 1 F -1
+'Item1-at-RDC_B1'	 0.01643836  0     B '.' 1 T 1 F -1
+'Item2-at-RDC_C1'	 0.01315068  0     B '.' 1 T 1 F -1
+'Item4-at-Plant_1'	 0.01972603  0     B '.' 4 T 1 F -1
+'Item4-at-Plant_2'	 0.01972603  0     B '.' 4 T 1 F -1
+'Item3-at-RDC_C1'	 0.01808219  0     B '.' 1 T 1 F -1
+'Item2-at-RDC_B1'	 0.01315068  0     B '.' 1 T 1 F -1
+'Item1-at-RDC_A1'	 0.01643836  0     B '.' 1 T 1 F -1
+'Item2-at-RDC_A1'	 0.01315068  0     B '.' 1 T 1 F -1
+'Item4-at-RDC_C1'	 0.01972603  0     B '.' 1 T 1 F -1
+'Item3-at-RDC_B1'	 0.01808219  0     B '.' 1 T 1 F -1
+'Item1-at-RDC_C2'	 0.01643836  0     B '.' 1 T 1 F -1
+'Item4-at-RDC_B1'	 0.01972603  0     B '.' 1 T 1 F -1
+'Item3-at-RDC_A1'	 0.01808219  0     B '.' 1 T 1 F -1
+'Item4-at-RDC_A1'	 0.01972603  0     B '.' 1 T 1 F -1
+'Item1-at-RDC_B2'	 0.01643836  0     B '.' 1 T 1 F -1
+'Item2-at-RDC_C2'	 0.01315068  0     B '.' 1 T 1 F -1
+'Item3-at-RDC_C2'	 0.01808219  0     B '.' 1 T 1 F -1
+'Item2-at-RDC_B2'	 0.01315068  0     B '.' 1 T 1 F -1
+'Item1-at-RDC_A2'	 0.01643836  0     B '.' 1 T 1 F -1
+;
+# now = 11-04-05 12:10; increment = 00:00
+param: MINBUFFER_BUCKET: min_inv_level_bucket :=
+#HEADER: name	 start 	 end 	 min
+#FILE: create_minsafetystock_setparam.in  
+;
+param: MAXBUFFER_BUCKET: max_inv_level_bucket :=
+#HEADER: name	 start 	 end 	 max
+#FILE: create_maxsafetystock_setparam.in 
+;
+param: MINTIMEBUFFER_BUCKET: min_inv_level_bucket :=
+#HEADER: name 	 start 	 end 	 min 
+#FILE: create_mintime_safetystock_setparam.in 
+;
+param: MAXTIMEBUFFER_BUCKET: max_inv_level_bucket :=
+#HEADER: name 	 start 	 end 	 max 
+#FILE: create_maxtime_safetystock_setparam.in 
+;
+param INV_REQUIREMENT := buffer_name band_level band_type start end amount
+#HEADER: name 	 band_level 	 band_type 	 start , end 	 amount 
+#FILE: tmapi_create_inventory_bands.in 
+;
+# now = 11-04-05 12:10; increment = 00:00
+param: OPERATION : operation_cost type := 
+#HEADER: op_name 	 op_cost 	 op_type
+#FILE: tmapi_create_operation_set.in 
+'Item1-OPY_1_14-at-Plant_1-47'	30	M
+'Transport-Item4-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C2--by-TRUCK-65'	2.5	D
+'Deliver-Item1-from-RDC_C2-33'	0	D
+'Deliver-Item3-from-DC_B-37'	0	D
+'Item2-OPY_1_23-at-Plant_1-48'	35	M
+'Transport-Item2-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-71'	3	D
+'Transport-Item3-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B2--by-TRUCK-92'	2.5	D
+'Transport-Item4-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-73'	3	D
+'Transport-Item3-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-60'	2	D
+'Deliver-Item3-from-RDC_C1-30'	0	D
+'Deliver-Item4-from-RDC_A2-31'	0	D
+'Transport-Item4-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A1--by-TRUCK-77'	1	D
+'Deliver-Item4-from-RDC_C2-6'	0	D
+'Int_A-OPX_1_A-at-Plant_1-44'	75	M
+'Transport-Item2-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-83'	2	D
+'Transport-Item1-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C1--by-TRUCK-102'	1	D
+'Transport-Item2-from-MFG_DIST-DC_B-to-MFG_DIST-DC_C--by-TRUCK-99'	4	D
+'Transport-Item4-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-85'	2	D
+'Deliver-Item4-from-Plant_2-23'	0	D
+'Transport-Item3-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C1--by-TRUCK-104'	1	D
+'Transport-Item1-from-MFG_DIST-DC_B-to-MFG_DIST-DC_C--by-TRUCK-98'	4	D
+'Transport-Item4-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B2--by-TRUCK-93'	2.5	D
+'Deliver-Item2-from-RDC_A1-41'	0	D
+'Item3-OPY_2_23-at-Plant_2-56'	35	M
+'Transport-Item3-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A2--by-TRUCK-80'	1.5	D
+'Deliver-Item2-from-Plant_2-16'	0	D
+'Transport-Item3-from-MFG_DIST-DC_B-to-MFG_DIST-DC_C--by-TRUCK-100'	4	D
+'Deliver-Item4-from-DC_B-12'	0	D
+'Transport-Item1-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A2--by-TRUCK-78'	1.5	D
+'Int_C-OPX_1_C-at-Plant_1-46'	75	M
+'Deliver-Item4-from-Plant_1-26'	0	D
+'Transport-Item1-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B1--by-TRUCK-86'	1	D
+'Transport-Item2-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-59'	2	D
+'Deliver-Item1-from-RDC_C1-34'	0	D
+'Int_A-OPX_2_A-at-Plant_2-51'	75	M
+'Deliver-Item3-from-DC_A-39'	0	D
+'Deliver-Item4-from-RDC_C1-7'	0	D
+'Deliver-Item2-from-Plant_1-17'	0	D
+'Transport-Item2-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-67'	3	D
+'Deliver-Item1-from-DC_B-1'	0	D
+'Item4-OPY_2_14-at-Plant_2-57'	35	M
+'Transport-Item4-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-69'	3	D
+'Transport-Item1-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A1--by-TRUCK-74'	1	D
+'Deliver-Item4-from-RDC_A1-32'	0	D
+'Transport-Item4-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A2--by-TRUCK-81'	1.5	D
+'Deliver-Item2-from-DC_C-18'	0	D
+'Transport-Item1-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C2--by-TRUCK-62'	2.5	D
+'Deliver-Item2-from-RDC_C1-10'	0	D
+'Deliver-Item2-from-RDC_B2-27'	0	D
+'Transport-Item4-from-MFG_DIST-DC_B-to-MFG_DIST-DC_C--by-TRUCK-101'	4	D
+'Transport-Item2-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B1--by-TRUCK-87'	1	D
+'Deliver-Item3-from-RDC_B2-3'	0	D
+'Transport-Item1-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-70'	3	D
+'Int_C-OPX_2_C-at-Plant_2-53'	75	M
+'Deliver-Item3-from-RDC_A2-14'	0	D
+'Item4-OPY_1_14-at-Plant_1-50'	35	M
+'Transport-Item3-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-72'	3	D
+'Transport-Item4-from-MFG_DIST-DC_A-to-MFG_DIST-DC_C--by-TRUCK-97'	4	D
+'Transport-Item4-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-61'	2	D
+'Transport-Item2-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A2--by-TRUCK-79'	1.5	D
+'Deliver-Item3-from-Plant_2-42'	0	D
+'Item3-OPY_1_23-at-Plant_1-49'	35	M
+'Transport-Item3-from-MFG_DIST-DC_A-to-MFG_DIST-DC_C--by-TRUCK-96'	4	D
+'Item1-OPY_2_14-at-Plant_2-54'	30	M
+'Deliver-Item1-from-RDC_A2-21'	0	D
+'Transport-Item2-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C2--by-TRUCK-63'	2.5	D
+'Item2-OPY_2_23-at-Plant_2-55'	35	M
+'Transport-Item2-from-MFG_DIST-DC_A-to-MFG_DIST-DC_C--by-TRUCK-95'	4	D
+'Deliver-Item3-from-DC_C-35'	0	D
+'Transport-Item1-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-82'	2	D
+'Transport-Item1-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B2--by-TRUCK-90'	2.5	D
+'Deliver-Item1-from-Plant_2-36'	0	D
+'Deliver-Item1-from-RDC_A1-24'	0	D
+'Transport-Item1-from-MFG_DIST-DC_A-to-MFG_DIST-DC_C--by-TRUCK-94'	4	D
+'Transport-Item3-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-84'	2	D
+'Deliver-Item3-from-Plant_1-43'	0	D
+'Deliver-Item4-from-DC_A-13'	0	D
+'Transport-Item2-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C1--by-TRUCK-103'	1	D
+'Transport-Item4-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C1--by-TRUCK-105'	1	D
+'Transport-Item3-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B1--by-TRUCK-88'	1	D
+'Transport-Item2-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A1--by-TRUCK-75'	1	D
+'Deliver-Item2-from-DC_A-20'	0	D
+'Int_B-OPX_1_B-at-Plant_1-45'	75	M
+'Deliver-Item1-from-RDC_B1-8'	0	D
+'Deliver-Item1-from-Plant_1-38'	0	D
+'Deliver-Item3-from-RDC_B1-4'	0	D
+'Deliver-Item2-from-RDC_C2-9'	0	D
+'Transport-Item3-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C2--by-TRUCK-64'	2.5	D
+'Transport-Item1-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-58'	2	D
+'Deliver-Item2-from-RDC_B1-28'	0	D
+'Deliver-Item2-from-DC_B-19'	0	D
+'Deliver-Item1-from-DC_A-2'	0	D
+'Transport-Item2-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B2--by-TRUCK-91'	2.5	D
+'Deliver-Item4-from-RDC_B2-22'	0	D
+'Deliver-Item3-from-RDC_A1-15'	0	D
+'Transport-Item1-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-66'	3	D
+'Deliver-Item4-from-DC_C-11'	0	D
+'Transport-Item4-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B1--by-TRUCK-89'	1	D
+'Deliver-Item2-from-RDC_A2-40'	0	D
+'Transport-Item3-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A1--by-TRUCK-76'	1	D
+'Transport-Item3-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-68'	3	D
+'Deliver-Item4-from-RDC_B1-25'	0	D
+'Deliver-Item1-from-DC_C-0'	0	D
+'Int_B-OPX_2_B-at-Plant_2-52'	75	M
+'Deliver-Item1-from-RDC_B2-5'	0	D
+'Deliver-Item3-from-RDC_C2-29'	0	D
+;
+set NONPRODUCE_OPERATIONS:=
+#HEADER: op_name
+#FILE: create_nonproduce_ops_set.in 
+## 0 nonproducing ops out of 106
+;
+param: BUFFER_PROD_OP := 
+#HEADER: buffer 	 producing_op 
+#FILE: create_producer_op_set.in 
+'Item2-at-RDC_A2'  'Transport-Item2-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A2--by-TRUCK-79'
+'Item4-at-RDC_C2'  'Transport-Item4-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C2--by-TRUCK-65'
+'Item3-at-RDC_B2'  'Transport-Item3-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B2--by-TRUCK-92'
+'Item4-at-RDC_B2'  'Transport-Item4-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B2--by-TRUCK-93'
+'Item3-at-RDC_A2'  'Transport-Item3-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A2--by-TRUCK-80'
+'Int_A-at-Plant_1'  'Int_A-OPX_1_A-at-Plant_1-44'
+'Item4-at-RDC_A2'  'Transport-Item4-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A2--by-TRUCK-81'
+'Int_B-at-Plant_1'  'Int_B-OPX_1_B-at-Plant_1-45'
+'Int_A-at-Plant_2'  'Int_A-OPX_2_A-at-Plant_2-51'
+'Int_C-at-Plant_1'  'Int_C-OPX_1_C-at-Plant_1-46'
+'Int_B-at-Plant_2'  'Int_B-OPX_2_B-at-Plant_2-52'
+'Item1-at-DC_A'  'Transport-Item1-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-58'
+'Item1-at-DC_A'  'Transport-Item1-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-70'
+'Item1-at-DC_B'  'Transport-Item1-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-82'
+'Item1-at-DC_B'  'Transport-Item1-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-66'
+'Item1-at-DC_C'  'Transport-Item1-from-MFG_DIST-DC_A-to-MFG_DIST-DC_C--by-TRUCK-94'
+'Item1-at-DC_C'  'Transport-Item1-from-MFG_DIST-DC_B-to-MFG_DIST-DC_C--by-TRUCK-98'
+'Item2-at-DC_A'  'Transport-Item2-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-59'
+'Item2-at-DC_A'  'Transport-Item2-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-71'
+'Int_C-at-Plant_2'  'Int_C-OPX_2_C-at-Plant_2-53'
+'Item2-at-DC_B'  'Transport-Item2-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-83'
+'Item2-at-DC_B'  'Transport-Item2-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-67'
+'Item2-at-DC_C'  'Transport-Item2-from-MFG_DIST-DC_A-to-MFG_DIST-DC_C--by-TRUCK-95'
+'Item2-at-DC_C'  'Transport-Item2-from-MFG_DIST-DC_B-to-MFG_DIST-DC_C--by-TRUCK-99'
+'Item3-at-DC_A'  'Transport-Item3-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-60'
+'Item3-at-DC_A'  'Transport-Item3-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-72'
+'Item3-at-DC_B'  'Transport-Item3-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-84'
+'Item3-at-DC_B'  'Transport-Item3-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-68'
+'Item3-at-DC_C'  'Transport-Item3-from-MFG_DIST-DC_A-to-MFG_DIST-DC_C--by-TRUCK-96'
+'Item3-at-DC_C'  'Transport-Item3-from-MFG_DIST-DC_B-to-MFG_DIST-DC_C--by-TRUCK-100'
+'Item4-at-DC_A'  'Transport-Item4-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-61'
+'Item4-at-DC_A'  'Transport-Item4-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-73'
+'Item1-at-Plant_1'  'Item1-OPY_1_14-at-Plant_1-47'
+'Item4-at-DC_B'  'Transport-Item4-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-85'
+'Item4-at-DC_B'  'Transport-Item4-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-69'
+'Item1-at-Plant_2'  'Item1-OPY_2_14-at-Plant_2-54'
+'Item4-at-DC_C'  'Transport-Item4-from-MFG_DIST-DC_A-to-MFG_DIST-DC_C--by-TRUCK-97'
+'Item4-at-DC_C'  'Transport-Item4-from-MFG_DIST-DC_B-to-MFG_DIST-DC_C--by-TRUCK-101'
+'Item2-at-Plant_1'  'Item2-OPY_1_23-at-Plant_1-48'
+'Item2-at-Plant_2'  'Item2-OPY_2_23-at-Plant_2-55'
+'Item1-at-RDC_C1'  'Transport-Item1-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C1--by-TRUCK-102'
+'Item3-at-Plant_1'  'Item3-OPY_1_23-at-Plant_1-49'
+'Item3-at-Plant_2'  'Item3-OPY_2_23-at-Plant_2-56'
+'Item1-at-RDC_B1'  'Transport-Item1-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B1--by-TRUCK-86'
+'Item2-at-RDC_C1'  'Transport-Item2-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C1--by-TRUCK-103'
+'Item4-at-Plant_1'  'Item4-OPY_1_14-at-Plant_1-50'
+'Item4-at-Plant_2'  'Item4-OPY_2_14-at-Plant_2-57'
+'Item3-at-RDC_C1'  'Transport-Item3-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C1--by-TRUCK-104'
+'Item2-at-RDC_B1'  'Transport-Item2-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B1--by-TRUCK-87'
+'Item1-at-RDC_A1'  'Transport-Item1-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A1--by-TRUCK-74'
+'Item2-at-RDC_A1'  'Transport-Item2-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A1--by-TRUCK-75'
+'Item4-at-RDC_C1'  'Transport-Item4-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C1--by-TRUCK-105'
+'Item3-at-RDC_B1'  'Transport-Item3-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B1--by-TRUCK-88'
+'Item1-at-RDC_C2'  'Transport-Item1-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C2--by-TRUCK-62'
+'Item4-at-RDC_B1'  'Transport-Item4-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B1--by-TRUCK-89'
+'Item3-at-RDC_A1'  'Transport-Item3-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A1--by-TRUCK-76'
+'Item4-at-RDC_A1'  'Transport-Item4-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A1--by-TRUCK-77'
+'Item1-at-RDC_B2'  'Transport-Item1-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B2--by-TRUCK-90'
+'Item2-at-RDC_C2'  'Transport-Item2-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C2--by-TRUCK-63'
+'Item3-at-RDC_C2'  'Transport-Item3-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C2--by-TRUCK-64'
+'Item2-at-RDC_B2'  'Transport-Item2-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B2--by-TRUCK-91'
+'Item1-at-RDC_A2'  'Transport-Item1-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A2--by-TRUCK-78'
+;
+param: OPPRODUCEBUFFER: produce_lag produce_rate handling_cost_in step altSet altFlow altRank special_rank := 
+#HEADER: op_name 	 buffer 	 roundedLag 	 defaultRate 	 handling_cost 	 altFlow 	 altSet 	 altPercent 	 altRank 	 special_rank
+#FILE: create_opproducebuffer_setparam.in  
+'Item1-OPY_1_14-at-Plant_1-47' 'Item1-at-Plant_1' 0 1  0     '1'  
+'Transport-Item4-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C2--by-TRUCK-65' 'Item4-at-RDC_C2' 1 1  0     '1'  
+'Item2-OPY_1_23-at-Plant_1-48' 'Item2-at-Plant_1' 0 1  0     '1'  
+'Transport-Item2-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-71' 'Item2-at-DC_A' 3 1  0     '1'  
+'Transport-Item3-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B2--by-TRUCK-92' 'Item3-at-RDC_B2' 1 1  0     '1'  
+'Transport-Item4-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-73' 'Item4-at-DC_A' 3 1  0     '1'  
+'Transport-Item3-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-60' 'Item3-at-DC_A' 2 1  0     '1'  
+'Transport-Item4-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A1--by-TRUCK-77' 'Item4-at-RDC_A1' 1 1  0     '1'  
+'Int_A-OPX_1_A-at-Plant_1-44' 'Int_A-at-Plant_1' 0 1  0     '1'  
+'Transport-Item2-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-83' 'Item2-at-DC_B' 2 1  0     '1'  
+'Transport-Item1-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C1--by-TRUCK-102' 'Item1-at-RDC_C1' 1 1  0     '1'  
+'Transport-Item2-from-MFG_DIST-DC_B-to-MFG_DIST-DC_C--by-TRUCK-99' 'Item2-at-DC_C' 1 1  0     '1'  
+'Transport-Item4-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-85' 'Item4-at-DC_B' 2 1  0     '1'  
+'Transport-Item3-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C1--by-TRUCK-104' 'Item3-at-RDC_C1' 1 1  0     '1'  
+'Transport-Item1-from-MFG_DIST-DC_B-to-MFG_DIST-DC_C--by-TRUCK-98' 'Item1-at-DC_C' 1 1  0     '1'  
+'Transport-Item4-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B2--by-TRUCK-93' 'Item4-at-RDC_B2' 1 1  0     '1'  
+'Item3-OPY_2_23-at-Plant_2-56' 'Item3-at-Plant_2' 0 1  0     '1'  
+'Transport-Item3-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A2--by-TRUCK-80' 'Item3-at-RDC_A2' 1 1  0     '1'  
+'Transport-Item3-from-MFG_DIST-DC_B-to-MFG_DIST-DC_C--by-TRUCK-100' 'Item3-at-DC_C' 1 1  0     '1'  
+'Transport-Item1-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A2--by-TRUCK-78' 'Item1-at-RDC_A2' 1 1  0     '1'  
+'Int_C-OPX_1_C-at-Plant_1-46' 'Int_C-at-Plant_1' 0 1  0     '1'  
+'Transport-Item1-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B1--by-TRUCK-86' 'Item1-at-RDC_B1' 1 1  0     '1'  
+'Transport-Item2-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-59' 'Item2-at-DC_A' 2 1  0     '1'  
+'Int_A-OPX_2_A-at-Plant_2-51' 'Int_A-at-Plant_2' 0 1  0     '1'  
+'Transport-Item2-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-67' 'Item2-at-DC_B' 3 1  0     '1'  
+'Item4-OPY_2_14-at-Plant_2-57' 'Item4-at-Plant_2' 0 1  0     '1'  
+'Transport-Item4-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-69' 'Item4-at-DC_B' 3 1  0     '1'  
+'Transport-Item1-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A1--by-TRUCK-74' 'Item1-at-RDC_A1' 1 1  0     '1'  
+'Transport-Item4-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A2--by-TRUCK-81' 'Item4-at-RDC_A2' 1 1  0     '1'  
+'Transport-Item1-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C2--by-TRUCK-62' 'Item1-at-RDC_C2' 1 1  0     '1'  
+'Transport-Item4-from-MFG_DIST-DC_B-to-MFG_DIST-DC_C--by-TRUCK-101' 'Item4-at-DC_C' 1 1  0     '1'  
+'Transport-Item2-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B1--by-TRUCK-87' 'Item2-at-RDC_B1' 1 1  0     '1'  
+'Transport-Item1-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-70' 'Item1-at-DC_A' 3 1  0     '1'  
+'Int_C-OPX_2_C-at-Plant_2-53' 'Int_C-at-Plant_2' 0 1  0     '1'  
+'Item4-OPY_1_14-at-Plant_1-50' 'Item4-at-Plant_1' 0 1  0     '1'  
+'Transport-Item3-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-72' 'Item3-at-DC_A' 3 1  0     '1'  
+'Transport-Item4-from-MFG_DIST-DC_A-to-MFG_DIST-DC_C--by-TRUCK-97' 'Item4-at-DC_C' 1 1  0     '1'  
+'Transport-Item4-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-61' 'Item4-at-DC_A' 2 1  0     '1'  
+'Transport-Item2-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A2--by-TRUCK-79' 'Item2-at-RDC_A2' 1 1  0     '1'  
+'Item3-OPY_1_23-at-Plant_1-49' 'Item3-at-Plant_1' 0 1  0     '1'  
+'Transport-Item3-from-MFG_DIST-DC_A-to-MFG_DIST-DC_C--by-TRUCK-96' 'Item3-at-DC_C' 1 1  0     '1'  
+'Item1-OPY_2_14-at-Plant_2-54' 'Item1-at-Plant_2' 0 1  0     '1'  
+'Transport-Item2-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C2--by-TRUCK-63' 'Item2-at-RDC_C2' 1 1  0     '1'  
+'Item2-OPY_2_23-at-Plant_2-55' 'Item2-at-Plant_2' 0 1  0     '1'  
+'Transport-Item2-from-MFG_DIST-DC_A-to-MFG_DIST-DC_C--by-TRUCK-95' 'Item2-at-DC_C' 1 1  0     '1'  
+'Transport-Item1-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-82' 'Item1-at-DC_B' 2 1  0     '1'  
+'Transport-Item1-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B2--by-TRUCK-90' 'Item1-at-RDC_B2' 1 1  0     '1'  
+'Transport-Item1-from-MFG_DIST-DC_A-to-MFG_DIST-DC_C--by-TRUCK-94' 'Item1-at-DC_C' 1 1  0     '1'  
+'Transport-Item3-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-84' 'Item3-at-DC_B' 2 1  0     '1'  
+'Transport-Item2-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C1--by-TRUCK-103' 'Item2-at-RDC_C1' 1 1  0     '1'  
+'Transport-Item4-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C1--by-TRUCK-105' 'Item4-at-RDC_C1' 1 1  0     '1'  
+'Transport-Item3-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B1--by-TRUCK-88' 'Item3-at-RDC_B1' 1 1  0     '1'  
+'Transport-Item2-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A1--by-TRUCK-75' 'Item2-at-RDC_A1' 1 1  0     '1'  
+'Int_B-OPX_1_B-at-Plant_1-45' 'Int_B-at-Plant_1' 0 1  0     '1'  
+'Transport-Item3-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C2--by-TRUCK-64' 'Item3-at-RDC_C2' 1 1  0     '1'  
+'Transport-Item1-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-58' 'Item1-at-DC_A' 2 1  0     '1'  
+'Transport-Item2-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B2--by-TRUCK-91' 'Item2-at-RDC_B2' 1 1  0     '1'  
+'Transport-Item1-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-66' 'Item1-at-DC_B' 3 1  0     '1'  
+'Transport-Item4-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B1--by-TRUCK-89' 'Item4-at-RDC_B1' 1 1  0     '1'  
+'Transport-Item3-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A1--by-TRUCK-76' 'Item3-at-RDC_A1' 1 1  0     '1'  
+'Transport-Item3-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-68' 'Item3-at-DC_B' 3 1  0     '1'  
+'Int_B-OPX_2_B-at-Plant_2-52' 'Int_B-at-Plant_2' 0 1  0     '1'  
+;
+param: OPBUFFER_YIELD: produce_per := 
+#HEADER: Op_name 	 produce_buffer 	 lastStart 	 effStart 	 currentRate 	 altFlow 	 altSet
+#FILE: create_opproducebufferyld_setparam.in   
+;
+# now = 11-04-05 12:10; increment = 00:00
+param: OPCONSUMEBUFFER: consume_lag consume_per handling_cost_out altSet altFlow altRank special_rank := 
+#HEADER: op_name 	 consume_flow.buffer 	 roundedLag 	 defaultRate 	 handling_cost 	 step  	 altFlow 	 altSet 	 altPercent 	 altRank 	 special_rank 
+#FILE: create_oppconsumebuffer_setparam.in 
+'Item1-OPY_1_14-at-Plant_1-47' 'Int_A-at-Plant_1' 0	1  0     '1'  
+'Transport-Item4-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C2--by-TRUCK-65' 'Item4-at-DC_C' 0	1  0     '1'  
+'Deliver-Item1-from-RDC_C2-33' 'Item1-at-RDC_C2' 0	1  0     '1'  
+'Deliver-Item3-from-DC_B-37' 'Item3-at-DC_B' 0	1  0     '1'  
+'Item2-OPY_1_23-at-Plant_1-48' 'Int_B-at-Plant_1' 0	1  0     '1'  
+'Transport-Item2-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-71' 'Item2-at-Plant_2' 0	1  0     '1'  
+'Transport-Item3-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B2--by-TRUCK-92' 'Item3-at-DC_B' 0	1  0     '1'  
+'Transport-Item4-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-73' 'Item4-at-Plant_2' 0	1  0     '1'  
+'Transport-Item3-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-60' 'Item3-at-Plant_1' 0	1  0     '1'  
+'Deliver-Item3-from-RDC_C1-30' 'Item3-at-RDC_C1' 0	1  0     '1'  
+'Deliver-Item4-from-RDC_A2-31' 'Item4-at-RDC_A2' 0	1  0     '1'  
+'Transport-Item4-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A1--by-TRUCK-77' 'Item4-at-DC_A' 0	1  0     '1'  
+'Deliver-Item4-from-RDC_C2-6' 'Item4-at-RDC_C2' 0	1  0     '1'  
+'Int_A-OPX_1_A-at-Plant_1-44' 'raw_m-at-Plant_1' 0	1  0     '1'  
+'Transport-Item2-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-83' 'Item2-at-Plant_2' 0	1  0     '1'  
+'Transport-Item1-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C1--by-TRUCK-102' 'Item1-at-DC_C' 0	1  0     '1'  
+'Transport-Item2-from-MFG_DIST-DC_B-to-MFG_DIST-DC_C--by-TRUCK-99' 'Item2-at-DC_B' 0	1  0     '1'  
+'Transport-Item4-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-85' 'Item4-at-Plant_2' 0	1  0     '1'  
+'Deliver-Item4-from-Plant_2-23' 'Item4-at-Plant_2' 0	1  0     '1'  
+'Transport-Item3-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C1--by-TRUCK-104' 'Item3-at-DC_C' 0	1  0     '1'  
+'Transport-Item1-from-MFG_DIST-DC_B-to-MFG_DIST-DC_C--by-TRUCK-98' 'Item1-at-DC_B' 0	1  0     '1'  
+'Transport-Item4-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B2--by-TRUCK-93' 'Item4-at-DC_B' 0	1  0     '1'  
+'Deliver-Item2-from-RDC_A1-41' 'Item2-at-RDC_A1' 0	1  0     '1'  
+'Item3-OPY_2_23-at-Plant_2-56' 'Int_B-at-Plant_2' 0	1  0     '1'  
+'Transport-Item3-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A2--by-TRUCK-80' 'Item3-at-DC_A' 0	1  0     '1'  
+'Deliver-Item2-from-Plant_2-16' 'Item2-at-Plant_2' 0	1  0     '1'  
+'Transport-Item3-from-MFG_DIST-DC_B-to-MFG_DIST-DC_C--by-TRUCK-100' 'Item3-at-DC_B' 0	1  0     '1'  
+'Deliver-Item4-from-DC_B-12' 'Item4-at-DC_B' 0	1  0     '1'  
+'Transport-Item1-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A2--by-TRUCK-78' 'Item1-at-DC_A' 0	1  0     '1'  
+'Int_C-OPX_1_C-at-Plant_1-46' 'raw_m-at-Plant_1' 0	1  0     '1'  
+'Deliver-Item4-from-Plant_1-26' 'Item4-at-Plant_1' 0	1  0     '1'  
+'Transport-Item1-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B1--by-TRUCK-86' 'Item1-at-DC_B' 0	1  0     '1'  
+'Transport-Item2-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-59' 'Item2-at-Plant_1' 0	1  0     '1'  
+'Deliver-Item1-from-RDC_C1-34' 'Item1-at-RDC_C1' 0	1  0     '1'  
+'Int_A-OPX_2_A-at-Plant_2-51' 'raw_m-at-Plant_2' 0	1  0     '1'  
+'Deliver-Item3-from-DC_A-39' 'Item3-at-DC_A' 0	1  0     '1'  
+'Deliver-Item4-from-RDC_C1-7' 'Item4-at-RDC_C1' 0	1  0     '1'  
+'Deliver-Item2-from-Plant_1-17' 'Item2-at-Plant_1' 0	1  0     '1'  
+'Transport-Item2-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-67' 'Item2-at-Plant_1' 0	1  0     '1'  
+'Deliver-Item1-from-DC_B-1' 'Item1-at-DC_B' 0	1  0     '1'  
+'Item4-OPY_2_14-at-Plant_2-57' 'Int_C-at-Plant_2' 0	1  0     '1'  
+'Transport-Item4-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-69' 'Item4-at-Plant_1' 0	1  0     '1'  
+'Transport-Item1-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A1--by-TRUCK-74' 'Item1-at-DC_A' 0	1  0     '1'  
+'Deliver-Item4-from-RDC_A1-32' 'Item4-at-RDC_A1' 0	1  0     '1'  
+'Transport-Item4-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A2--by-TRUCK-81' 'Item4-at-DC_A' 0	1  0     '1'  
+'Deliver-Item2-from-DC_C-18' 'Item2-at-DC_C' 0	1  0     '1'  
+'Transport-Item1-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C2--by-TRUCK-62' 'Item1-at-DC_C' 0	1  0     '1'  
+'Deliver-Item2-from-RDC_C1-10' 'Item2-at-RDC_C1' 0	1  0     '1'  
+'Deliver-Item2-from-RDC_B2-27' 'Item2-at-RDC_B2' 0	1  0     '1'  
+'Transport-Item4-from-MFG_DIST-DC_B-to-MFG_DIST-DC_C--by-TRUCK-101' 'Item4-at-DC_B' 0	1  0     '1'  
+'Transport-Item2-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B1--by-TRUCK-87' 'Item2-at-DC_B' 0	1  0     '1'  
+'Deliver-Item3-from-RDC_B2-3' 'Item3-at-RDC_B2' 0	1  0     '1'  
+'Transport-Item1-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-70' 'Item1-at-Plant_2' 0	1  0     '1'  
+'Int_C-OPX_2_C-at-Plant_2-53' 'raw_m-at-Plant_2' 0	1  0     '1'  
+'Deliver-Item3-from-RDC_A2-14' 'Item3-at-RDC_A2' 0	1  0     '1'  
+'Item4-OPY_1_14-at-Plant_1-50' 'Int_C-at-Plant_1' 0	1  0     '1'  
+'Transport-Item3-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-72' 'Item3-at-Plant_2' 0	1  0     '1'  
+'Transport-Item4-from-MFG_DIST-DC_A-to-MFG_DIST-DC_C--by-TRUCK-97' 'Item4-at-DC_A' 0	1  0     '1'  
+'Transport-Item4-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-61' 'Item4-at-Plant_1' 0	1  0     '1'  
+'Transport-Item2-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A2--by-TRUCK-79' 'Item2-at-DC_A' 0	1  0     '1'  
+'Deliver-Item3-from-Plant_2-42' 'Item3-at-Plant_2' 0	1  0     '1'  
+'Item3-OPY_1_23-at-Plant_1-49' 'Int_B-at-Plant_1' 0	1  0     '1'  
+'Transport-Item3-from-MFG_DIST-DC_A-to-MFG_DIST-DC_C--by-TRUCK-96' 'Item3-at-DC_A' 0	1  0     '1'  
+'Item1-OPY_2_14-at-Plant_2-54' 'Int_A-at-Plant_2' 0	1  0     '1'  
+'Deliver-Item1-from-RDC_A2-21' 'Item1-at-RDC_A2' 0	1  0     '1'  
+'Transport-Item2-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C2--by-TRUCK-63' 'Item2-at-DC_C' 0	1  0     '1'  
+'Item2-OPY_2_23-at-Plant_2-55' 'Int_B-at-Plant_2' 0	1  0     '1'  
+'Transport-Item2-from-MFG_DIST-DC_A-to-MFG_DIST-DC_C--by-TRUCK-95' 'Item2-at-DC_A' 0	1  0     '1'  
+'Deliver-Item3-from-DC_C-35' 'Item3-at-DC_C' 0	1  0     '1'  
+'Transport-Item1-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-82' 'Item1-at-Plant_2' 0	1  0     '1'  
+'Transport-Item1-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B2--by-TRUCK-90' 'Item1-at-DC_B' 0	1  0     '1'  
+'Deliver-Item1-from-Plant_2-36' 'Item1-at-Plant_2' 0	1  0     '1'  
+'Deliver-Item1-from-RDC_A1-24' 'Item1-at-RDC_A1' 0	1  0     '1'  
+'Transport-Item1-from-MFG_DIST-DC_A-to-MFG_DIST-DC_C--by-TRUCK-94' 'Item1-at-DC_A' 0	1  0     '1'  
+'Transport-Item3-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-84' 'Item3-at-Plant_2' 0	1  0     '1'  
+'Deliver-Item3-from-Plant_1-43' 'Item3-at-Plant_1' 0	1  0     '1'  
+'Deliver-Item4-from-DC_A-13' 'Item4-at-DC_A' 0	1  0     '1'  
+'Transport-Item2-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C1--by-TRUCK-103' 'Item2-at-DC_C' 0	1  0     '1'  
+'Transport-Item4-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C1--by-TRUCK-105' 'Item4-at-DC_C' 0	1  0     '1'  
+'Transport-Item3-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B1--by-TRUCK-88' 'Item3-at-DC_B' 0	1  0     '1'  
+'Transport-Item2-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A1--by-TRUCK-75' 'Item2-at-DC_A' 0	1  0     '1'  
+'Deliver-Item2-from-DC_A-20' 'Item2-at-DC_A' 0	1  0     '1'  
+'Int_B-OPX_1_B-at-Plant_1-45' 'raw_m-at-Plant_1' 0	1  0     '1'  
+'Deliver-Item1-from-RDC_B1-8' 'Item1-at-RDC_B1' 0	1  0     '1'  
+'Deliver-Item1-from-Plant_1-38' 'Item1-at-Plant_1' 0	1  0     '1'  
+'Deliver-Item3-from-RDC_B1-4' 'Item3-at-RDC_B1' 0	1  0     '1'  
+'Deliver-Item2-from-RDC_C2-9' 'Item2-at-RDC_C2' 0	1  0     '1'  
+'Transport-Item3-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C2--by-TRUCK-64' 'Item3-at-DC_C' 0	1  0     '1'  
+'Transport-Item1-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-58' 'Item1-at-Plant_1' 0	1  0     '1'  
+'Deliver-Item2-from-RDC_B1-28' 'Item2-at-RDC_B1' 0	1  0     '1'  
+'Deliver-Item2-from-DC_B-19' 'Item2-at-DC_B' 0	1  0     '1'  
+'Deliver-Item1-from-DC_A-2' 'Item1-at-DC_A' 0	1  0     '1'  
+'Transport-Item2-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B2--by-TRUCK-91' 'Item2-at-DC_B' 0	1  0     '1'  
+'Deliver-Item4-from-RDC_B2-22' 'Item4-at-RDC_B2' 0	1  0     '1'  
+'Deliver-Item3-from-RDC_A1-15' 'Item3-at-RDC_A1' 0	1  0     '1'  
+'Transport-Item1-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-66' 'Item1-at-Plant_1' 0	1  0     '1'  
+'Deliver-Item4-from-DC_C-11' 'Item4-at-DC_C' 0	1  0     '1'  
+'Transport-Item4-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B1--by-TRUCK-89' 'Item4-at-DC_B' 0	1  0     '1'  
+'Deliver-Item2-from-RDC_A2-40' 'Item2-at-RDC_A2' 0	1  0     '1'  
+'Transport-Item3-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A1--by-TRUCK-76' 'Item3-at-DC_A' 0	1  0     '1'  
+'Transport-Item3-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-68' 'Item3-at-Plant_1' 0	1  0     '1'  
+'Deliver-Item4-from-RDC_B1-25' 'Item4-at-RDC_B1' 0	1  0     '1'  
+'Deliver-Item1-from-DC_C-0' 'Item1-at-DC_C' 0	1  0     '1'  
+'Int_B-OPX_2_B-at-Plant_2-52' 'raw_m-at-Plant_2' 0	1  0     '1'  
+'Deliver-Item1-from-RDC_B2-5' 'Item1-at-RDC_B2' 0	1  0     '1'  
+'Deliver-Item3-from-RDC_C2-29' 'Item3-at-RDC_C2' 0	1  0     '1'  
+;
+param: OPBUFFER_CONSUME_YIELD: consume_per := 
+#HEADER: Op_name 	 consume_buffer 	 lastStart 	 effStart 	 currentRate 	 altFlow 	 altSet
+#FILE: create_oppconsumebufferyld_setparam.in 
+;
+# now = 11-04-05 12:10; increment = 00:00
+param: PRIMARY_ALTERNATE: alt_cost special_rank alt_rank := 
+#HEADER: primName 	 original_op 	 wght 	 special_rank 	 rank
+#FILE: create_altprimary_new_setparam.in 
+'Transport-Item2-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-83'  'Transport-Item2-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-67' 0.5 0 1
+'Transport-Item3-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-60'  'Transport-Item3-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-72' 0.5 0 1
+'Transport-Item1-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-58'  'Transport-Item1-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-70' 0.5 0 1
+'Transport-Item3-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-84'  'Transport-Item3-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-68' 0.5 0 1
+'Transport-Item4-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-61'  'Transport-Item4-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-73' 0.5 0 1
+'Transport-Item1-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-82'  'Transport-Item1-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-66' 0.5 0 1
+'Transport-Item2-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-59'  'Transport-Item2-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-71' 0.5 0 1
+'Transport-Item4-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-85'  'Transport-Item4-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-69' 0.5 0 1
+;
+param: PROP_PRIMARY_ALTERNATE: alt_ratio special_rank := 
+#HEADER: primName 	 alt_prop 	 wght 	 special_rank
+#FILE: create_altproportion_new_setparam.in
+;
+# now = 11-04-05 12:10; increment = 00:00
+set RESOURCE := stage 
+#HEADER: res_name 	 stage 
+#FILE: create_resource_set.in 
+'WCRESY_1_23-x-RESY_1_23'   
+'WCRESX_2_B-x-RESX_2_B'   
+'WCRESY_2_14-x-RESY_2_14'   
+'WCRESY_2_23-x-RESY_2_23'   
+'WCRESX_1_B-x-RESX_1_B'   
+'WCRESX_2_A-x-RESX_2_A'   
+'WCRESX_2_C-x-RESX_2_C'   
+'WCRESX_1_A-x-RESX_1_A'   
+'WCRESY_1_14-x-RESY_1_14'   
+'WCRESX_1_C-x-RESX_1_C'   
+;
+param: LOAD: load_per load_offset altFlow altSet altPercent altRank special_rank:=
+#HEADER: op_name 	 resource/buffer_name 	 step 	 defaultRate 	 roundedLag 	 altFlow 	 altSet 	 altPercent
+#FILE: create_load_setparam.in  
+'Item1-OPY_1_14-at-Plant_1-47'	'WCRESY_1_14-x-RESY_1_14'  '1'   0.01666667  0  
+'Item2-OPY_1_23-at-Plant_1-48'	'WCRESY_1_23-x-RESY_1_23'  '1'   0.01  0  
+'Int_A-OPX_1_A-at-Plant_1-44'	'WCRESX_1_A-x-RESX_1_A'  '1'   0.002  0  
+'Item3-OPY_2_23-at-Plant_2-56'	'WCRESY_2_23-x-RESY_2_23'  '1'   0.025  0  
+'Int_C-OPX_1_C-at-Plant_1-46'	'WCRESX_1_C-x-RESX_1_C'  '1'   0.002  0  
+'Int_A-OPX_2_A-at-Plant_2-51'	'WCRESX_2_A-x-RESX_2_A'  '1'   0.002  0  
+'Item4-OPY_2_14-at-Plant_2-57'	'WCRESY_2_14-x-RESY_2_14'  '1'   0.01  0  
+'Int_C-OPX_2_C-at-Plant_2-53'	'WCRESX_2_C-x-RESX_2_C'  '1'   0.002  0  
+'Item4-OPY_1_14-at-Plant_1-50'	'WCRESY_1_14-x-RESY_1_14'  '1'   0.01  0  
+'Item3-OPY_1_23-at-Plant_1-49'	'WCRESY_1_23-x-RESY_1_23'  '1'   0.025  0  
+'Item1-OPY_2_14-at-Plant_2-54'	'WCRESY_2_14-x-RESY_2_14'  '1'   0.01666667  0  
+'Item2-OPY_2_23-at-Plant_2-55'	'WCRESY_2_23-x-RESY_2_23'  '1'   0.01  0  
+'Int_B-OPX_1_B-at-Plant_1-45'	'WCRESX_1_B-x-RESX_1_B'  '1'   0.002  0  
+'Int_B-OPX_2_B-at-Plant_2-52'	'WCRESX_2_B-x-RESX_2_B'  '1'   0.002  0  
+;
+param: LOAD_YIELD: load_per := 
+#HEADER: oper_name 	 buffer/resource 	 start 	 end 	 rate 	 step 	 altFlow 	 altSet
+#FILE: create_loadyld_setparam.in 
+;
+param min_outsource := 
+#HEADER: capBuffer 	 start 	 available 
+#FILE: create_min_outsource_new_param.in 
+;
+param: RESOURCE_TARGET_UTILIZATION: resource period util :=  
+#HEADER: capBuffer 	 start 	 available 
+#FILE: create_target_util_param.in 
+;
+param max_outsource := 
+#HEADER: capBuffer 	 start 	 available 
+#FILE: create_max_outsource_new_param.in 
+;
+param RESOURCE_YIELD_TARGET := resource startDate endDate minYield maxYield
+#HEADER: resource startDate endDate minYield maxYield
+#FILE: create_resource_yield_target.in 
+;
+# now = 11-04-05 12:10; increment = 00:00
+param: REQUESTLAYER: rank demand_quantity price cost maxLate promiseDate index demandtype:=
+#HEADER: delivery_name 	 due_date_start 	 rank 	 qty 	 sel_price 	 backlog_cost 	 max_lateness 	 due_date_end 	 indx 	 forecast_or_actual
+#FILE: tmapi_create_requests.in  
+'Item1**Deliver-Item1-from-DC_B-1'   '2001-01-09'   '1'     3000     0     0     -1    '2001-01-09'    1     F
+'Item2**Deliver-Item2-from-DC_B-19'   '2001-01-09'   '1'     3000     0     0     -1    '2001-01-09'    2     F
+'Item3**Deliver-Item3-from-DC_B-37'   '2001-01-09'   '1'     3000     0     0     -1    '2001-01-09'    3     F
+'Item4**Deliver-Item4-from-DC_B-12'   '2001-01-09'   '1'     3000     0     0     -1    '2001-01-09'    4     F
+;
+param: DELIVER_OP: item op lag := 
+#HEADER: itemName 	 deliveryOp 	 roundedLag
+#FILE: create_deliver_op_set.in
+'Item1**Deliver-Item1-from-DC_A-2'  'Deliver-Item1-from-DC_A-2'  0
+'Item1**Deliver-Item1-from-DC_B-1'  'Deliver-Item1-from-DC_B-1'  0
+'Item1**Deliver-Item1-from-DC_C-0'  'Deliver-Item1-from-DC_C-0'  0
+'Item1**Deliver-Item1-from-Plant_1-38'  'Deliver-Item1-from-Plant_1-38'  0
+'Item1**Deliver-Item1-from-Plant_2-36'  'Deliver-Item1-from-Plant_2-36'  0
+'Item1**Deliver-Item1-from-RDC_A1-24'  'Deliver-Item1-from-RDC_A1-24'  0
+'Item1**Deliver-Item1-from-RDC_A2-21'  'Deliver-Item1-from-RDC_A2-21'  0
+'Item1**Deliver-Item1-from-RDC_B1-8'  'Deliver-Item1-from-RDC_B1-8'  0
+'Item1**Deliver-Item1-from-RDC_B2-5'  'Deliver-Item1-from-RDC_B2-5'  0
+'Item1**Deliver-Item1-from-RDC_C1-34'  'Deliver-Item1-from-RDC_C1-34'  0
+'Item1**Deliver-Item1-from-RDC_C2-33'  'Deliver-Item1-from-RDC_C2-33'  0
+'Item2**Deliver-Item2-from-DC_A-20'  'Deliver-Item2-from-DC_A-20'  0
+'Item2**Deliver-Item2-from-DC_B-19'  'Deliver-Item2-from-DC_B-19'  0
+'Item2**Deliver-Item2-from-DC_C-18'  'Deliver-Item2-from-DC_C-18'  0
+'Item2**Deliver-Item2-from-Plant_1-17'  'Deliver-Item2-from-Plant_1-17'  0
+'Item2**Deliver-Item2-from-Plant_2-16'  'Deliver-Item2-from-Plant_2-16'  0
+'Item2**Deliver-Item2-from-RDC_A1-41'  'Deliver-Item2-from-RDC_A1-41'  0
+'Item2**Deliver-Item2-from-RDC_A2-40'  'Deliver-Item2-from-RDC_A2-40'  0
+'Item2**Deliver-Item2-from-RDC_B1-28'  'Deliver-Item2-from-RDC_B1-28'  0
+'Item2**Deliver-Item2-from-RDC_B2-27'  'Deliver-Item2-from-RDC_B2-27'  0
+'Item2**Deliver-Item2-from-RDC_C1-10'  'Deliver-Item2-from-RDC_C1-10'  0
+'Item2**Deliver-Item2-from-RDC_C2-9'  'Deliver-Item2-from-RDC_C2-9'  0
+'Item3**Deliver-Item3-from-DC_A-39'  'Deliver-Item3-from-DC_A-39'  0
+'Item3**Deliver-Item3-from-DC_B-37'  'Deliver-Item3-from-DC_B-37'  0
+'Item3**Deliver-Item3-from-DC_C-35'  'Deliver-Item3-from-DC_C-35'  0
+'Item3**Deliver-Item3-from-Plant_1-43'  'Deliver-Item3-from-Plant_1-43'  0
+'Item3**Deliver-Item3-from-Plant_2-42'  'Deliver-Item3-from-Plant_2-42'  0
+'Item3**Deliver-Item3-from-RDC_A1-15'  'Deliver-Item3-from-RDC_A1-15'  0
+'Item3**Deliver-Item3-from-RDC_A2-14'  'Deliver-Item3-from-RDC_A2-14'  0
+'Item3**Deliver-Item3-from-RDC_B1-4'  'Deliver-Item3-from-RDC_B1-4'  0
+'Item3**Deliver-Item3-from-RDC_B2-3'  'Deliver-Item3-from-RDC_B2-3'  0
+'Item3**Deliver-Item3-from-RDC_C1-30'  'Deliver-Item3-from-RDC_C1-30'  0
+'Item3**Deliver-Item3-from-RDC_C2-29'  'Deliver-Item3-from-RDC_C2-29'  0
+'Item4**Deliver-Item4-from-DC_A-13'  'Deliver-Item4-from-DC_A-13'  0
+'Item4**Deliver-Item4-from-DC_B-12'  'Deliver-Item4-from-DC_B-12'  0
+'Item4**Deliver-Item4-from-DC_C-11'  'Deliver-Item4-from-DC_C-11'  0
+'Item4**Deliver-Item4-from-Plant_1-26'  'Deliver-Item4-from-Plant_1-26'  0
+'Item4**Deliver-Item4-from-Plant_2-23'  'Deliver-Item4-from-Plant_2-23'  0
+'Item4**Deliver-Item4-from-RDC_A1-32'  'Deliver-Item4-from-RDC_A1-32'  0
+'Item4**Deliver-Item4-from-RDC_A2-31'  'Deliver-Item4-from-RDC_A2-31'  0
+'Item4**Deliver-Item4-from-RDC_B1-25'  'Deliver-Item4-from-RDC_B1-25'  0
+'Item4**Deliver-Item4-from-RDC_B2-22'  'Deliver-Item4-from-RDC_B2-22'  0
+'Item4**Deliver-Item4-from-RDC_C1-7'  'Deliver-Item4-from-RDC_C1-7'  0
+'Item4**Deliver-Item4-from-RDC_C2-6'  'Deliver-Item4-from-RDC_C2-6'  0
+;
+# now = 11-04-05 12:10; increment = 00:00
+set OPERATION_EFFECTIVE_TIME:=
+#HEADER: OP_name 	 eff_start 	 eff_end 	 op_type
+#FILE: tmapi_create_opeffectivity_set.in 
+;
+set ALTFLOW_EFFECTIVE_TIME := op altflow altSet start end type 
+#HEADER: altOp 	 altFlow 	 altSet 	 effStart 	 effEnd 	 type
+#FILE: create_altflow_effective_set.in 
+;
+param wip_quantity := buffer date amount
+#HEADER: buffer_name 	 start startingOnhand
+#FILE: create_wip_param.in 
+;
+param on_hand_quantity := buffer start amount 
+#HEADER: buffer_name 	 effStart 	 available
+#FILE: create_on_hand_quantity_param.in 
+;
+param: RESOURCETIMEBUCKET: resource start capacity := 
+#HEADER: res_name 	 eff_start 	 available 
+#FILE: create_capacity_setparam.in 
+'WCRESY_1_23-x-RESY_1_23'    '2001-01-04'    12    
+'='    '2001-01-05'    12    
+'='    '2001-01-06'    12    
+'='    '2001-01-07'    12    
+'='    '2001-01-08'    12    
+'='    '2001-01-09'    12    
+'='    '2001-01-10'    12    
+'='    '2001-01-11'    84    
+'='    '2001-01-18'    84    
+'='    '2001-01-25'    84    
+'='    '2001-02-01'    84    
+'='    '2001-02-08'    84    
+'='    '2001-02-15'    84    
+'='    '2001-02-22'    84    
+'='    '2001-03-01'    84    
+'='    '2001-03-08'    84    
+'='    '2001-03-15'    204    
+'='    '2001-04-01'    360    
+'='    '2001-05-01'    372    
+'='    '2001-06-01'    360    
+'='    '2001-07-01'    372    
+'='    '2001-08-01'    372    
+'='    '2001-09-01'    360    
+'='    '2001-10-01'    372    
+'='    '2001-11-01'    360    
+'='    '2001-12-01'    360    
+'WCRESX_2_B-x-RESX_2_B'    '2001-01-04'    12    
+'='    '2001-01-05'    12    
+'='    '2001-01-06'    12    
+'='    '2001-01-07'    12    
+'='    '2001-01-08'    12    
+'='    '2001-01-09'    12    
+'='    '2001-01-10'    12    
+'='    '2001-01-11'    84    
+'='    '2001-01-18'    84    
+'='    '2001-01-25'    84    
+'='    '2001-02-01'    84    
+'='    '2001-02-08'    84    
+'='    '2001-02-15'    84    
+'='    '2001-02-22'    84    
+'='    '2001-03-01'    84    
+'='    '2001-03-08'    84    
+'='    '2001-03-15'    204    
+'='    '2001-04-01'    360    
+'='    '2001-05-01'    372    
+'='    '2001-06-01'    360    
+'='    '2001-07-01'    372    
+'='    '2001-08-01'    372    
+'='    '2001-09-01'    360    
+'='    '2001-10-01'    372    
+'='    '2001-11-01'    360    
+'='    '2001-12-01'    360    
+'WCRESY_2_14-x-RESY_2_14'    '2001-01-04'    12    
+'='    '2001-01-05'    12    
+'='    '2001-01-06'    12    
+'='    '2001-01-07'    12    
+'='    '2001-01-08'    12    
+'='    '2001-01-09'    12    
+'='    '2001-01-10'    12    
+'='    '2001-01-11'    84    
+'='    '2001-01-18'    84    
+'='    '2001-01-25'    84    
+'='    '2001-02-01'    84    
+'='    '2001-02-08'    84    
+'='    '2001-02-15'    84    
+'='    '2001-02-22'    84    
+'='    '2001-03-01'    84    
+'='    '2001-03-08'    84    
+'='    '2001-03-15'    204    
+'='    '2001-04-01'    360    
+'='    '2001-05-01'    372    
+'='    '2001-06-01'    360    
+'='    '2001-07-01'    372    
+'='    '2001-08-01'    372    
+'='    '2001-09-01'    360    
+'='    '2001-10-01'    372    
+'='    '2001-11-01'    360    
+'='    '2001-12-01'    360    
+'WCRESY_2_23-x-RESY_2_23'    '2001-01-04'    12    
+'='    '2001-01-05'    12    
+'='    '2001-01-06'    12    
+'='    '2001-01-07'    12    
+'='    '2001-01-08'    12    
+'='    '2001-01-09'    12    
+'='    '2001-01-10'    12    
+'='    '2001-01-11'    84    
+'='    '2001-01-18'    84    
+'='    '2001-01-25'    84    
+'='    '2001-02-01'    84    
+'='    '2001-02-08'    84    
+'='    '2001-02-15'    84    
+'='    '2001-02-22'    84    
+'='    '2001-03-01'    84    
+'='    '2001-03-08'    84    
+'='    '2001-03-15'    204    
+'='    '2001-04-01'    360    
+'='    '2001-05-01'    372    
+'='    '2001-06-01'    360    
+'='    '2001-07-01'    372    
+'='    '2001-08-01'    372    
+'='    '2001-09-01'    360    
+'='    '2001-10-01'    372    
+'='    '2001-11-01'    360    
+'='    '2001-12-01'    360    
+'WCRESX_1_B-x-RESX_1_B'    '2001-01-04'    12    
+'='    '2001-01-05'    12    
+'='    '2001-01-06'    12    
+'='    '2001-01-07'    12    
+'='    '2001-01-08'    12    
+'='    '2001-01-09'    12    
+'='    '2001-01-10'    12    
+'='    '2001-01-11'    84    
+'='    '2001-01-18'    84    
+'='    '2001-01-25'    84    
+'='    '2001-02-01'    84    
+'='    '2001-02-08'    84    
+'='    '2001-02-15'    84    
+'='    '2001-02-22'    84    
+'='    '2001-03-01'    84    
+'='    '2001-03-08'    84    
+'='    '2001-03-15'    204    
+'='    '2001-04-01'    360    
+'='    '2001-05-01'    372    
+'='    '2001-06-01'    360    
+'='    '2001-07-01'    372    
+'='    '2001-08-01'    372    
+'='    '2001-09-01'    360    
+'='    '2001-10-01'    372    
+'='    '2001-11-01'    360    
+'='    '2001-12-01'    360    
+'WCRESX_2_A-x-RESX_2_A'    '2001-01-04'    12    
+'='    '2001-01-05'    12    
+'='    '2001-01-06'    12    
+'='    '2001-01-07'    12    
+'='    '2001-01-08'    12    
+'='    '2001-01-09'    12    
+'='    '2001-01-10'    12    
+'='    '2001-01-11'    84    
+'='    '2001-01-18'    84    
+'='    '2001-01-25'    84    
+'='    '2001-02-01'    84    
+'='    '2001-02-08'    84    
+'='    '2001-02-15'    84    
+'='    '2001-02-22'    84    
+'='    '2001-03-01'    84    
+'='    '2001-03-08'    84    
+'='    '2001-03-15'    204    
+'='    '2001-04-01'    360    
+'='    '2001-05-01'    372    
+'='    '2001-06-01'    360    
+'='    '2001-07-01'    372    
+'='    '2001-08-01'    372    
+'='    '2001-09-01'    360    
+'='    '2001-10-01'    372    
+'='    '2001-11-01'    360    
+'='    '2001-12-01'    360    
+'WCRESX_2_C-x-RESX_2_C'    '2001-01-04'    12    
+'='    '2001-01-05'    12    
+'='    '2001-01-06'    12    
+'='    '2001-01-07'    12    
+'='    '2001-01-08'    12    
+'='    '2001-01-09'    12    
+'='    '2001-01-10'    12    
+'='    '2001-01-11'    84    
+'='    '2001-01-18'    84    
+'='    '2001-01-25'    84    
+'='    '2001-02-01'    84    
+'='    '2001-02-08'    84    
+'='    '2001-02-15'    84    
+'='    '2001-02-22'    84    
+'='    '2001-03-01'    84    
+'='    '2001-03-08'    84    
+'='    '2001-03-15'    204    
+'='    '2001-04-01'    360    
+'='    '2001-05-01'    372    
+'='    '2001-06-01'    360    
+'='    '2001-07-01'    372    
+'='    '2001-08-01'    372    
+'='    '2001-09-01'    360    
+'='    '2001-10-01'    372    
+'='    '2001-11-01'    360    
+'='    '2001-12-01'    360    
+'WCRESX_1_A-x-RESX_1_A'    '2001-01-04'    12    
+'='    '2001-01-05'    12    
+'='    '2001-01-06'    12    
+'='    '2001-01-07'    12    
+'='    '2001-01-08'    12    
+'='    '2001-01-09'    12    
+'='    '2001-01-10'    12    
+'='    '2001-01-11'    84    
+'='    '2001-01-18'    84    
+'='    '2001-01-25'    84    
+'='    '2001-02-01'    84    
+'='    '2001-02-08'    84    
+'='    '2001-02-15'    84    
+'='    '2001-02-22'    84    
+'='    '2001-03-01'    84    
+'='    '2001-03-08'    84    
+'='    '2001-03-15'    204    
+'='    '2001-04-01'    360    
+'='    '2001-05-01'    372    
+'='    '2001-06-01'    360    
+'='    '2001-07-01'    372    
+'='    '2001-08-01'    372    
+'='    '2001-09-01'    360    
+'='    '2001-10-01'    372    
+'='    '2001-11-01'    360    
+'='    '2001-12-01'    360    
+'WCRESY_1_14-x-RESY_1_14'    '2001-01-04'    12    
+'='    '2001-01-05'    12    
+'='    '2001-01-06'    12    
+'='    '2001-01-07'    12    
+'='    '2001-01-08'    12    
+'='    '2001-01-09'    12    
+'='    '2001-01-10'    12    
+'='    '2001-01-11'    84    
+'='    '2001-01-18'    84    
+'='    '2001-01-25'    84    
+'='    '2001-02-01'    84    
+'='    '2001-02-08'    84    
+'='    '2001-02-15'    84    
+'='    '2001-02-22'    84    
+'='    '2001-03-01'    84    
+'='    '2001-03-08'    84    
+'='    '2001-03-15'    204    
+'='    '2001-04-01'    360    
+'='    '2001-05-01'    372    
+'='    '2001-06-01'    360    
+'='    '2001-07-01'    372    
+'='    '2001-08-01'    372    
+'='    '2001-09-01'    360    
+'='    '2001-10-01'    372    
+'='    '2001-11-01'    360    
+'='    '2001-12-01'    360    
+'WCRESX_1_C-x-RESX_1_C'    '2001-01-04'    12    
+'='    '2001-01-05'    12    
+'='    '2001-01-06'    12    
+'='    '2001-01-07'    12    
+'='    '2001-01-08'    12    
+'='    '2001-01-09'    12    
+'='    '2001-01-10'    12    
+'='    '2001-01-11'    84    
+'='    '2001-01-18'    84    
+'='    '2001-01-25'    84    
+'='    '2001-02-01'    84    
+'='    '2001-02-08'    84    
+'='    '2001-02-15'    84    
+'='    '2001-02-22'    84    
+'='    '2001-03-01'    84    
+'='    '2001-03-08'    84    
+'='    '2001-03-15'    204    
+'='    '2001-04-01'    360    
+'='    '2001-05-01'    372    
+'='    '2001-06-01'    360    
+'='    '2001-07-01'    372    
+'='    '2001-08-01'    372    
+'='    '2001-09-01'    360    
+'='    '2001-10-01'    372    
+'='    '2001-11-01'    360    
+'='    '2001-12-01'    360    
+;
+param CAPACITY_BANDS := resource_name bucket_start_time bucket_end_time level capacity min_capacity cost
+#HEADER: res_name 	 bucket_start 	 bucket_end level 	 capacity 	 min_capacity 	 cost
+#FILE: create_capacity_bands.in 
+;
+param STORAGE_BUCKET := facility_name start_date end_date regular_capacity surplus_capacity surplus_cost regular_cost
+#HEADER: facility_name 	 start 	 end 	 regular_capacity 	 surplus_capacity 	 surplus_cost 	 regular_cost
+#FILE: create_facility_storage.in
+;
+param fixed_flows := buffer date amount expiration_date onhold_finish_date
+#HEADER: name	 effDate 	 flowQty 	 expiration_date 	 onhold_finish_date
+#FILE: tmapi_create_fixed_flows_setparam.in 
+;
+param fixed_res_flows := 
+#HEADER: res_name 	 effDate 	 flowQty
+#FILE: create_fixed_resource_flows_setparam.in 
+;
+# now = 11-04-05 12:10; increment = 00:00
+param: LOTSIZED_OPERATION: minopplan maxopplan lotsize start end := 
+#HEADER: opname 	 minlot 	 maxlot 	 multiple 	 start end 
+#FILE: create_lotsize_data.in  
+;
+param: FAMILY : min_camp_len max_camp_len pref_sequence :=
+#HEADER: flws_resource 	 major_setup_name 	 minrunQty 	 maxrunQty 	 prefSeq
+#FILE: create_family_setparam.in 
+;
+param: FAMILYOPERATION : dummy :=
+#HEADER: resource_name 	 setup_family 	 op 
+#FILE: create_family_operation_setparam.in
+;
+param: RESFAM1FAM2 : seq_dep_setup_time off_spec_cost :=
+#HEADER: flws_resName 	 major_setup_changeover_entries.from 	 major_setup_changeover_entries.to 	 changeover_quantity.setup 	 dummy_off_spec_cost 
+#FILE: create_res_fam1_fam2_setparam.in 
+;
+param lpopt_opplans_out := "lpopt.opplans.out";
+param lpopt_bufferplans_out := "lpopt.bufferplans.out";
+param lpopt_resource_out := "lpopt.resource.out";
+param lpopt_demand_out := "lpopt.demand.out";
+param lpopt_obval_out := "lpopt.obval.out";
+param: BUFFERGROUPS := 
+#HEADER: buffer_name 	 buffer_group_name 
+#FILE: create_buffer_groups.in 
+'Item2-at-RDC_A2'  'IS-RDC'
+'Item4-at-RDC_C2'  'IS-RDC'
+'Item3-at-RDC_B2'  'IS-RDC'
+'Item4-at-RDC_B2'  'IS-RDC'
+'Item3-at-RDC_A2'  'IS-RDC'
+'Int_A-at-Plant_1'  'IS-PL'
+'Item4-at-RDC_A2'  'IS-RDC'
+'Int_B-at-Plant_1'  'IS-PL'
+'Int_A-at-Plant_2'  'IS-PL'
+'Int_C-at-Plant_1'  'IS-PL'
+'Int_B-at-Plant_2'  'IS-PL'
+'Item1-at-DC_A'  'IS-DC'
+'raw_m-at-Plant_1'  'IS-RAW'
+'Item1-at-DC_B'  'IS-DC'
+'Item1-at-DC_C'  'IS-DC'
+'Item2-at-DC_A'  'IS-DC'
+'Int_C-at-Plant_2'  'IS-PL'
+'Item2-at-DC_B'  'IS-DC'
+'Item2-at-DC_C'  'IS-DC'
+'raw_m-at-Plant_2'  'IS-RAW'
+'Item3-at-DC_A'  'IS-DC'
+'Item3-at-DC_B'  'IS-DC'
+'Item3-at-DC_C'  'IS-DC'
+'Item4-at-DC_A'  'IS-DC'
+'Item1-at-Plant_1'  'IS-PL'
+'Item4-at-DC_B'  'IS-DC'
+'Item1-at-Plant_2'  'IS-PL'
+'Item4-at-DC_C'  'IS-DC'
+'Item2-at-Plant_1'  'IS-PL'
+'Item2-at-Plant_2'  'IS-PL'
+'Item1-at-RDC_C1'  'IS-RDC'
+'Item3-at-Plant_1'  'IS-PL'
+'Item3-at-Plant_2'  'IS-PL'
+'Item1-at-RDC_B1'  'IS-RDC'
+'Item2-at-RDC_C1'  'IS-RDC'
+'Item4-at-Plant_1'  'IS-PL'
+'Item4-at-Plant_2'  'IS-PL'
+'Item3-at-RDC_C1'  'IS-RDC'
+'Item2-at-RDC_B1'  'IS-RDC'
+'Item1-at-RDC_A1'  'IS-RDC'
+'Item2-at-RDC_A1'  'IS-RDC'
+'Item4-at-RDC_C1'  'IS-RDC'
+'Item3-at-RDC_B1'  'IS-RDC'
+'Item1-at-RDC_C2'  'IS-RDC'
+'Item4-at-RDC_B1'  'IS-RDC'
+'Item3-at-RDC_A1'  'IS-RDC'
+'Item4-at-RDC_A1'  'IS-RDC'
+'Item1-at-RDC_B2'  'IS-RDC'
+'Item2-at-RDC_C2'  'IS-RDC'
+'Item3-at-RDC_C2'  'IS-RDC'
+'Item2-at-RDC_B2'  'IS-RDC'
+'Item1-at-RDC_A2'  'IS-RDC'
+;
+param: OPGROUPS :=
+#HEADER: op_name 	 op_group 
+#FILE: create_op_groups.in 
+'Transport-Item1-from-MFG_DIST-DC_A-to-MFG_DIST-DC_C--by-TRUCK-94'  'IS-DC'
+'Transport-Item1-from-MFG_DIST-DC_B-to-MFG_DIST-DC_C--by-TRUCK-98'  'IS-DC'
+'Transport-Item2-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-83'  'IS-DC'
+'Transport-Item2-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-67'  'IS-DC'
+'Transport-Item3-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-60'  'IS-DC'
+'Transport-Item3-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-72'  'IS-DC'
+'Transport-Item1-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-58'  'IS-DC'
+'Transport-Item1-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-70'  'IS-DC'
+'Transport-Item2-from-MFG_DIST-DC_A-to-MFG_DIST-DC_C--by-TRUCK-95'  'IS-DC'
+'Transport-Item2-from-MFG_DIST-DC_B-to-MFG_DIST-DC_C--by-TRUCK-99'  'IS-DC'
+'Transport-Item4-from-MFG_DIST-DC_A-to-MFG_DIST-DC_C--by-TRUCK-97'  'IS-DC'
+'Transport-Item4-from-MFG_DIST-DC_B-to-MFG_DIST-DC_C--by-TRUCK-101'  'IS-DC'
+'Transport-Item3-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-84'  'IS-DC'
+'Transport-Item3-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-68'  'IS-DC'
+'Transport-Item4-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-61'  'IS-DC'
+'Transport-Item4-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-73'  'IS-DC'
+'Transport-Item1-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-82'  'IS-DC'
+'Transport-Item1-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-66'  'IS-DC'
+'Transport-Item2-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-59'  'IS-DC'
+'Transport-Item2-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-71'  'IS-DC'
+'Transport-Item3-from-MFG_DIST-DC_A-to-MFG_DIST-DC_C--by-TRUCK-96'  'IS-DC'
+'Transport-Item3-from-MFG_DIST-DC_B-to-MFG_DIST-DC_C--by-TRUCK-100'  'IS-DC'
+'Transport-Item4-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-85'  'IS-DC'
+'Transport-Item4-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-69'  'IS-DC'
+'Item1-OPY_1_14-at-Plant_1-47'  'ITEM_OP_GRP1'
+'Transport-Item4-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C2--by-TRUCK-65'  'IS-RDC'
+'Item2-OPY_1_23-at-Plant_1-48'  'ITEM_OP_GRP2'
+'Transport-Item2-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-71'  'IS-DC'
+'Transport-Item3-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B2--by-TRUCK-92'  'IS-RDC'
+'Transport-Item4-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-73'  'IS-DC'
+'Transport-Item3-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-60'  'IS-DC'
+'Transport-Item4-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A1--by-TRUCK-77'  'IS-RDC'
+'Int_A-OPX_1_A-at-Plant_1-44'  'IS-PL'
+'Transport-Item2-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-83'  'IS-DC'
+'Transport-Item1-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C1--by-TRUCK-102'  'IS-RDC'
+'Transport-Item2-from-MFG_DIST-DC_B-to-MFG_DIST-DC_C--by-TRUCK-99'  'IS-DC'
+'Transport-Item4-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-85'  'IS-DC'
+'Transport-Item3-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C1--by-TRUCK-104'  'IS-RDC'
+'Transport-Item1-from-MFG_DIST-DC_B-to-MFG_DIST-DC_C--by-TRUCK-98'  'IS-DC'
+'Transport-Item4-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B2--by-TRUCK-93'  'IS-RDC'
+'Item3-OPY_2_23-at-Plant_2-56'  'ITEM_OP_GRP2_1'
+'Transport-Item3-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A2--by-TRUCK-80'  'IS-RDC'
+'Transport-Item3-from-MFG_DIST-DC_B-to-MFG_DIST-DC_C--by-TRUCK-100'  'IS-DC'
+'Transport-Item1-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A2--by-TRUCK-78'  'IS-RDC'
+'Int_C-OPX_1_C-at-Plant_1-46'  'IS-PL'
+'Transport-Item1-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B1--by-TRUCK-86'  'IS-RDC'
+'Transport-Item2-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-59'  'IS-DC'
+'Int_A-OPX_2_A-at-Plant_2-51'  'IS-PL'
+'Transport-Item2-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-67'  'IS-DC'
+'Item4-OPY_2_14-at-Plant_2-57'  'ITEM_OP_GRP1_1'
+'Transport-Item4-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-69'  'IS-DC'
+'Transport-Item1-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A1--by-TRUCK-74'  'IS-RDC'
+'Transport-Item4-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A2--by-TRUCK-81'  'IS-RDC'
+'Transport-Item1-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C2--by-TRUCK-62'  'IS-RDC'
+'Transport-Item4-from-MFG_DIST-DC_B-to-MFG_DIST-DC_C--by-TRUCK-101'  'IS-DC'
+'Transport-Item2-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B1--by-TRUCK-87'  'IS-RDC'
+'Transport-Item1-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-70'  'IS-DC'
+'Int_C-OPX_2_C-at-Plant_2-53'  'IS-PL'
+'Item4-OPY_1_14-at-Plant_1-50'  'ITEM_OP_GRP1'
+'Transport-Item3-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_A--by-TRUCK-72'  'IS-DC'
+'Transport-Item4-from-MFG_DIST-DC_A-to-MFG_DIST-DC_C--by-TRUCK-97'  'IS-DC'
+'Transport-Item4-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-61'  'IS-DC'
+'Transport-Item2-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A2--by-TRUCK-79'  'IS-RDC'
+'Item3-OPY_1_23-at-Plant_1-49'  'ITEM_OP_GRP2'
+'Transport-Item3-from-MFG_DIST-DC_A-to-MFG_DIST-DC_C--by-TRUCK-96'  'IS-DC'
+'Item1-OPY_2_14-at-Plant_2-54'  'ITEM_OP_GRP1_1'
+'Transport-Item2-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C2--by-TRUCK-63'  'IS-RDC'
+'Item2-OPY_2_23-at-Plant_2-55'  'ITEM_OP_GRP2_1'
+'Transport-Item2-from-MFG_DIST-DC_A-to-MFG_DIST-DC_C--by-TRUCK-95'  'IS-DC'
+'Transport-Item1-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-82'  'IS-DC'
+'Transport-Item1-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B2--by-TRUCK-90'  'IS-RDC'
+'Transport-Item1-from-MFG_DIST-DC_A-to-MFG_DIST-DC_C--by-TRUCK-94'  'IS-DC'
+'Transport-Item3-from-MFG_DIST-Plant_2-to-MFG_DIST-DC_B--by-TRUCK-84'  'IS-DC'
+'Transport-Item2-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C1--by-TRUCK-103'  'IS-RDC'
+'Transport-Item4-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C1--by-TRUCK-105'  'IS-RDC'
+'Transport-Item3-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B1--by-TRUCK-88'  'IS-RDC'
+'Transport-Item2-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A1--by-TRUCK-75'  'IS-RDC'
+'Int_B-OPX_1_B-at-Plant_1-45'  'IS-PL'
+'Transport-Item3-from-MFG_DIST-DC_C-to-MFG_DIST-RDC_C2--by-TRUCK-64'  'IS-RDC'
+'Transport-Item1-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_A--by-TRUCK-58'  'IS-DC'
+'Transport-Item2-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B2--by-TRUCK-91'  'IS-RDC'
+'Transport-Item1-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-66'  'IS-DC'
+'Transport-Item4-from-MFG_DIST-DC_B-to-MFG_DIST-RDC_B1--by-TRUCK-89'  'IS-RDC'
+'Transport-Item3-from-MFG_DIST-DC_A-to-MFG_DIST-RDC_A1--by-TRUCK-76'  'IS-RDC'
+'Transport-Item3-from-MFG_DIST-Plant_1-to-MFG_DIST-DC_B--by-TRUCK-68'  'IS-DC'
+'Int_B-OPX_2_B-at-Plant_2-52'  'IS-PL'
+;
+set RESOURCEGROUPS := 
+#HEADER: res_name 	 res_grp_name 
+#FILE: create_resource_groups.in 
+;
+set HOLIDAY_RESOURCE resource_calendar :=
+#HEADER: efficiency_cal_name 
+#FILE: create_hol_res.in 
+;
+param HOLIDAY_CAL_TIMEBUCKET calendar date_start date_end efficiency :=
+#HEADER: eff_cal_name 	 eff_entry_tart 	 eff_entry_end 	 entry.number 
+#FILE: create_hol_cal_timebucket.in 
+;
+set HOLIDAY_RESOURCE_LOAD operation resource :=
+#HEADER: op_name 	 load_eff_cal_name
+#FILE: create_hol_res_load_default.in 
+;
+param: CAMPSPECOPGROUPS : group max_camp_per_bucket max_num_of_changes period :=
+#HEADER: op_gourps 	 limit_ops_cal_entry.qty 	  limit_chg_cal_entry.qty 	 index 
+#FILE: create_camp_spec_op_groups.in 
+'ITEM_OP_GRP1'  '1'  '1'  '0'
+'ITEM_OP_GRP1'  '1'  '1'  '1'
+'ITEM_OP_GRP1'  '1'  '1'  '2'
+'ITEM_OP_GRP1'  '1'  '1'  '3'
+'ITEM_OP_GRP1'  '1'  '1'  '4'
+'ITEM_OP_GRP1'  '1'  '1'  '5'
+'ITEM_OP_GRP1'  '1'  '1'  '6'
+'ITEM_OP_GRP1'  '1'  '1'  '7'
+'ITEM_OP_GRP1'  '1'  '1'  '8'
+'ITEM_OP_GRP1'  '1'  '1'  '9'
+'ITEM_OP_GRP1'  '1'  '1'  '10'
+'ITEM_OP_GRP1'  '1'  '1'  '11'
+'ITEM_OP_GRP1'  '1'  '1'  '12'
+'ITEM_OP_GRP1'  '1'  '1'  '13'
+'ITEM_OP_GRP1'  '1'  '1'  '14'
+'ITEM_OP_GRP1'  '1'  '1'  '15'
+'ITEM_OP_GRP1'  '1'  '1'  '16'
+'ITEM_OP_GRP1'  '1'  '1'  '17'
+'ITEM_OP_GRP1'  '1'  '1'  '18'
+'ITEM_OP_GRP1'  '1'  '1'  '19'
+'ITEM_OP_GRP1'  '1'  '1'  '20'
+'ITEM_OP_GRP1'  '1'  '1'  '21'
+'ITEM_OP_GRP1'  '1'  '1'  '22'
+'ITEM_OP_GRP1'  '1'  '1'  '23'
+'ITEM_OP_GRP1'  '1'  '1'  '24'
+'ITEM_OP_GRP1'  '1'  '1'  '25'
+'ITEM_OP_GRP1'  '1'  '1'  '26'
+'ITEM_OP_GRP2'  '1'  '1'  '0'
+'ITEM_OP_GRP2'  '1'  '1'  '1'
+'ITEM_OP_GRP2'  '1'  '1'  '2'
+'ITEM_OP_GRP2'  '1'  '1'  '3'
+'ITEM_OP_GRP2'  '1'  '1'  '4'
+'ITEM_OP_GRP2'  '1'  '1'  '5'
+'ITEM_OP_GRP2'  '1'  '1'  '6'
+'ITEM_OP_GRP2'  '1'  '1'  '7'
+'ITEM_OP_GRP2'  '1'  '1'  '8'
+'ITEM_OP_GRP2'  '1'  '1'  '9'
+'ITEM_OP_GRP2'  '1'  '1'  '10'
+'ITEM_OP_GRP2'  '1'  '1'  '11'
+'ITEM_OP_GRP2'  '1'  '1'  '12'
+'ITEM_OP_GRP2'  '1'  '1'  '13'
+'ITEM_OP_GRP2'  '1'  '1'  '14'
+'ITEM_OP_GRP2'  '1'  '1'  '15'
+'ITEM_OP_GRP2'  '1'  '1'  '16'
+'ITEM_OP_GRP2'  '1'  '1'  '17'
+'ITEM_OP_GRP2'  '1'  '1'  '18'
+'ITEM_OP_GRP2'  '1'  '1'  '19'
+'ITEM_OP_GRP2'  '1'  '1'  '20'
+'ITEM_OP_GRP2'  '1'  '1'  '21'
+'ITEM_OP_GRP2'  '1'  '1'  '22'
+'ITEM_OP_GRP2'  '1'  '1'  '23'
+'ITEM_OP_GRP2'  '1'  '1'  '24'
+'ITEM_OP_GRP2'  '1'  '1'  '25'
+'ITEM_OP_GRP2'  '1'  '1'  '26'
+'ITEM_OP_GRP2_1'  '1'  '1'  '0'
+'ITEM_OP_GRP2_1'  '1'  '1'  '1'
+'ITEM_OP_GRP2_1'  '1'  '1'  '2'
+'ITEM_OP_GRP2_1'  '1'  '1'  '3'
+'ITEM_OP_GRP2_1'  '1'  '1'  '4'
+'ITEM_OP_GRP2_1'  '1'  '1'  '5'
+'ITEM_OP_GRP2_1'  '1'  '1'  '6'
+'ITEM_OP_GRP2_1'  '1'  '1'  '7'
+'ITEM_OP_GRP2_1'  '1'  '1'  '8'
+'ITEM_OP_GRP2_1'  '1'  '1'  '9'
+'ITEM_OP_GRP2_1'  '1'  '1'  '10'
+'ITEM_OP_GRP2_1'  '1'  '1'  '11'
+'ITEM_OP_GRP2_1'  '1'  '1'  '12'
+'ITEM_OP_GRP2_1'  '1'  '1'  '13'
+'ITEM_OP_GRP2_1'  '1'  '1'  '14'
+'ITEM_OP_GRP2_1'  '1'  '1'  '15'
+'ITEM_OP_GRP2_1'  '1'  '1'  '16'
+'ITEM_OP_GRP2_1'  '1'  '1'  '17'
+'ITEM_OP_GRP2_1'  '1'  '1'  '18'
+'ITEM_OP_GRP2_1'  '1'  '1'  '19'
+'ITEM_OP_GRP2_1'  '1'  '1'  '20'
+'ITEM_OP_GRP2_1'  '1'  '1'  '21'
+'ITEM_OP_GRP2_1'  '1'  '1'  '22'
+'ITEM_OP_GRP2_1'  '1'  '1'  '23'
+'ITEM_OP_GRP2_1'  '1'  '1'  '24'
+'ITEM_OP_GRP2_1'  '1'  '1'  '25'
+'ITEM_OP_GRP2_1'  '1'  '1'  '26'
+'ITEM_OP_GRP1_1'  '1'  '1'  '0'
+'ITEM_OP_GRP1_1'  '1'  '1'  '1'
+'ITEM_OP_GRP1_1'  '1'  '1'  '2'
+'ITEM_OP_GRP1_1'  '1'  '1'  '3'
+'ITEM_OP_GRP1_1'  '1'  '1'  '4'
+'ITEM_OP_GRP1_1'  '1'  '1'  '5'
+'ITEM_OP_GRP1_1'  '1'  '1'  '6'
+'ITEM_OP_GRP1_1'  '1'  '1'  '7'
+'ITEM_OP_GRP1_1'  '1'  '1'  '8'
+'ITEM_OP_GRP1_1'  '1'  '1'  '9'
+'ITEM_OP_GRP1_1'  '1'  '1'  '10'
+'ITEM_OP_GRP1_1'  '1'  '1'  '11'
+'ITEM_OP_GRP1_1'  '1'  '1'  '12'
+'ITEM_OP_GRP1_1'  '1'  '1'  '13'
+'ITEM_OP_GRP1_1'  '1'  '1'  '14'
+'ITEM_OP_GRP1_1'  '1'  '1'  '15'
+'ITEM_OP_GRP1_1'  '1'  '1'  '16'
+'ITEM_OP_GRP1_1'  '1'  '1'  '17'
+'ITEM_OP_GRP1_1'  '1'  '1'  '18'
+'ITEM_OP_GRP1_1'  '1'  '1'  '19'
+'ITEM_OP_GRP1_1'  '1'  '1'  '20'
+'ITEM_OP_GRP1_1'  '1'  '1'  '21'
+'ITEM_OP_GRP1_1'  '1'  '1'  '22'
+'ITEM_OP_GRP1_1'  '1'  '1'  '23'
+'ITEM_OP_GRP1_1'  '1'  '1'  '24'
+'ITEM_OP_GRP1_1'  '1'  '1'  '25'
+'ITEM_OP_GRP1_1'  '1'  '1'  '26'
+;
+param: OPCAMPINFO : start_status continuous_runner priority min_quantity :=
+#HEADER: op_name 	 oper.start_status 	 oper.continuous_runner 	 oper.priority 	 oper.min_quantity 
+#FILE: create_op_camp_info.in 
+'Item1-OPY_1_14-at-Plant_1-47'  '1'  '0'  '1001'  '0'
+'Item2-OPY_1_23-at-Plant_1-48'  '1'  '0'  '1001'  '0'
+'Item3-OPY_2_23-at-Plant_2-56'  '1'  '0'  '1001'  '0'
+'Item4-OPY_2_14-at-Plant_2-57'  '1'  '0'  '1001'  '0'
+'Item4-OPY_1_14-at-Plant_1-50'  '1'  '0'  '1001'  '0'
+'Item3-OPY_1_23-at-Plant_1-49'  '1'  '0'  '1001'  '0'
+'Item1-OPY_2_14-at-Plant_2-54'  '1'  '0'  '1001'  '0'
+'Item2-OPY_2_23-at-Plant_2-55'  '1'  '0'  '1001'  '0'
+;
+param PRODUCTMIX:= opgroup  resource  start end  min  max
+#HEADER: opgroup 	 resource 	 start 	 end 	 min 	 max
+#FILE: create_product_mix_entries.in 
+;
+# now = 11-04-05 12:10; increment = 00:00
+## export end = 11-04-05 12:10
+## Total export time = 00:00
